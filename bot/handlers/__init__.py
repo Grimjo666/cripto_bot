@@ -1,0 +1,1 @@
+from .cripto_info_handlers import register_cripto_info_handlers
