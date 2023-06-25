@@ -24,6 +24,21 @@ def get_cripto_info(id: str) -> tuple[str, int, str]:
             raise ValueError(f"У меня нет информации о криптовалюте: {id}")
 
 
+# with open('../../data/crypto_dict.pkl', 'wb') as file:
+#     response = requests.get('https://api.coincap.io/v2/assets')
+#     di = json.loads(response.text)
+#     res = {}
+#     for item in di['data']:
+#         temp = []
+#         for key, value in item.items():
+#             if key in ('id', 'symbol', 'name'):
+#                 temp.append(value.lower())
+#         res[tuple(set(temp))] = temp[0]
+#     pickle.dump(res, file)
+
+
+
+
 
 
 

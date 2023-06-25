@@ -2,7 +2,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from bot import bot, dp, get_cripto_info, rate_now_menu
+from bot import bot, get_cripto_info, rate_now_menu, cripto_buttons
 
 
 class MenuState(StatesGroup):
@@ -30,7 +30,7 @@ async def send_cripto_price(message: types.Message, state: FSMContext):
     message_id = data.get('rate_menu_id')
     cripto_id_list = message.text.lower().split()
     counter = len(cripto_id_list)
-    text = ''
+    text = 'Стоимость валюты высчитывается как средняя стоимость с разных торговых площадок\n\n'
 
     try:
         for cripto_id in cripto_id_list:
@@ -47,6 +47,10 @@ async def send_cripto_price(message: types.Message, state: FSMContext):
                                     chat_id=message.chat.id,
                                     text=text,
                                     reply_markup=rate_now_menu)
+
+        await bot.delete_message(chat_id=message.chat.id,
+                                 message_id=message.message_id)
+
     except Exception as ex:
         if type(ex) is ValueError:
             await bot.send_message(chat_id=message.chat.id, text=ex)
@@ -54,6 +58,14 @@ async def send_cripto_price(message: types.Message, state: FSMContext):
             print(ex)
 
 
+# Присылаем пользователю клавиатуру с кнопками-названиями валют
+async def send_cripto_buttons(callback_query: types.CallbackQuery):
+    await bot.send_message(chat_id=callback_query.message.chat.id,
+                           text='Выберите криптовалюту:',
+                           reply_markup=cripto_buttons)
+
+
 def register_cripto_info_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(send_rate_now_menu, lambda c: c.data == 'button_current_rate')
     dp.register_message_handler(send_cripto_price, state=MenuState.rate_now_menu)
+    dp.register_callback_query_handler(send_cripto_buttons, lambda c: c.data == 'button_cripto_buttons', state='*')

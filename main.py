@@ -18,6 +18,17 @@ async def command_start(message: types.Message):
                            reply_markup=main_menu)
 
 
+# присылает main_menu по нажатию на кнопку
+@dp.callback_query_handler(lambda c: c.data == 'button_main_menu', state='*')
+async def send_main_menu(callback_query: types.CallbackQuery, state: FSMContext):
+    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
+                                message_id=callback_query.message.message_id,
+                                text='Я бот, созданный для получения информации о ценах на крипто-валюты',
+                                reply_markup=main_menu)
+
+    await state.finish()
+
+
 # Хэндлер для закрытия меню
 @dp.callback_query_handler(lambda c: c.data == 'button_close', state='*')
 async def close_handler(callback_query: types.CallbackQuery, state: FSMContext):
