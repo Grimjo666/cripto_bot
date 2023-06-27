@@ -3,12 +3,13 @@ from aiogram import executor, types
 from aiogram.dispatcher import FSMContext
 
 from bot import dp, bot, main_menu
-from bot import cripto_info_handlers
+from bot import cripto_info_handlers, conversion_handlers
 
 logging.basicConfig(level=logging.INFO)
 
 
 cripto_info_handlers.register_cripto_info_handlers(dp)
+conversion_handlers.register_conversion_handlers(dp)
 
 
 @dp.message_handler(commands=['start', 'menu'])

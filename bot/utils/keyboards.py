@@ -13,14 +13,25 @@ button_cripto_buttons = InlineKeyboardButton('Список доступных в
 main_menu = InlineKeyboardMarkup(row_width=1)
 
 button_current_rate = InlineKeyboardButton('Текущий курс', callback_data='button_current_rate')
+button_conversion = InlineKeyboardButton('Конвертировать валюту', callback_data='button_conversion')
 
-main_menu.add(button_current_rate, button_close)
+main_menu.add(button_current_rate, button_conversion, button_close)
 
 
 # Меню курс сейчас
 rate_now_menu = InlineKeyboardMarkup(row_width=1)
 
 rate_now_menu.add(button_cripto_buttons, button_main_menu, button_close)
+
+
+# Меню конвертации
+conversion_menu = InlineKeyboardMarkup(row_width=1)
+
+conversion_menu.add(button_cripto_buttons, button_main_menu, button_close)
+
+conversion_menu_last = InlineKeyboardMarkup()
+
+conversion_menu_last.add(button_main_menu, button_close)
 
 
 # Клавиатура с названиями криптовалют

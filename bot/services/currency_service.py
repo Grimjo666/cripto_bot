@@ -12,7 +12,7 @@ def get_cripto_info(id: str) -> tuple[str, int, str]:
     with open('data/crypto_dict.pkl', 'rb') as file:
         loaded_dict = pickle.load(file)
         for key, value in loaded_dict.items():
-            if id in key:
+            if id.lower() in key:
                 response = requests.get(f'https://api.coincap.io/v2/assets/{value}')
                 cripto_dict = json.loads(response.text)
 

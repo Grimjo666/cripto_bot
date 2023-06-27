@@ -1,1 +1,2 @@
 from .cripto_info_handlers import register_cripto_info_handlers
+from .conversion_handlers import register_conversion_handlers
