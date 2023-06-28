@@ -1,4 +1,5 @@
 import logging
+import os
 from aiogram import executor, types
 from aiogram.dispatcher import FSMContext
 
@@ -6,6 +7,12 @@ from bot import dp, bot, main_menu
 from bot import cripto_info_handlers, conversion_handlers
 
 logging.basicConfig(level=logging.INFO)
+
+
+# Проверка наличия файла базы данных
+if not os.path.exists('data/crypto_data.db'):
+    # Запуск create_db.py, если файл базы данных отсутствует
+    os.system('python data/create_db.py')
 
 
 cripto_info_handlers.register_cripto_info_handlers(dp)
