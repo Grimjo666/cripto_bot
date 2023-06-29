@@ -2,7 +2,8 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from bot import bot, get_cripto_info, rate_now_menu, cripto_buttons
+from bot import bot, get_cripto_info
+from bot.utils import rate_now_menu, cripto_buttons
 
 
 class MenuState(StatesGroup):

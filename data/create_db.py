@@ -12,7 +12,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS user_conversion (
                     currency_from TEXT,
                     currency_to TEXT,
                     price FLOAT,   
-                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    time TEXT
                 )''')
 
 # Фиксация изменений и закрытие соединения

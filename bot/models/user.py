@@ -5,8 +5,8 @@ class User:
     def __init__(self, user_id):
         self._user_id = user_id
 
-    def write_conversion_to_db(self, currency_from, currency_to, amount, price):
-        conn = sqlite3.connect('crypto_data.db')
+    def write_conversion_to_db(self, currency_from, currency_to, amount, price, time):
+        conn = sqlite3.connect('data/crypto_data.db')
         cursor = conn.cursor()
 
         # Проверка текущего количества записей для данного пользователя
@@ -15,8 +15,8 @@ class User:
 
         if current_count < 20:
             # Вставка новых записей для данного пользователя
-            cursor.execute('INSERT INTO user_conversion (user_id, amount, currency_from, currency_to, price)'
-                           ' VALUES (?, ?, ?, ?, ?)', (self._user_id, amount, currency_from, currency_to, price))
+            cursor.execute('INSERT INTO user_conversion (user_id, amount, currency_from, currency_to, price, time)'
+                           ' VALUES (?, ?, ?, ?, ?, ?)', (self._user_id, amount, currency_from, currency_to, price, time))
         else:
             # Поиск самой старой записи для данного пользователя
             cursor.execute('SELECT id FROM user_conversion WHERE user_id = ?'
@@ -24,21 +24,24 @@ class User:
             oldest_id = cursor.fetchone()[0]
 
             # Обновление самой старой записи
-            cursor.execute('UPDATE user_conversion SET amount = ?, currency_from = ?, currency_to = ?, price = ?'
-                           ' WHERE id = ?', (amount, currency_from, currency_to, price, oldest_id))
+            cursor.execute('UPDATE user_conversion '
+                           'SET amount = ?, currency_from = ?, currency_to = ?, price = ?, time = ?'
+                           'WHERE id = ?', (amount, currency_from, currency_to, price, time, oldest_id))
 
         conn.commit()
         conn.close()
 
     def get_conversion_from_db(self):
-        conn = sqlite3.connect('crypto_data.db')
+        conn = sqlite3.connect('data/crypto_data.db')
         cursor = conn.cursor()
 
         # Поиск истории конвертации
-        cursor.execute('SELECT amount, currency_from, currency_to, price, timestamp FROM user_conversion'
+        cursor.execute('SELECT amount, currency_from, currency_to, price, time FROM user_conversion'
                        ' WHERE user_id = ? ', (self._user_id,))
 
         conversion_data = cursor.fetchall()
+
+        # print(conversion_data)
 
         if conversion_data:
             return conversion_data

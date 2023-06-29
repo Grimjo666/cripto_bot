@@ -3,8 +3,10 @@ import os
 from aiogram import executor, types
 from aiogram.dispatcher import FSMContext
 
-from bot import dp, bot, main_menu
-from bot import cripto_info_handlers, conversion_handlers
+from bot import dp, bot
+from bot.utils import main_menu
+from bot.handlers import cripto_info_handlers, conversion_handlers
+
 
 logging.basicConfig(level=logging.INFO)
 

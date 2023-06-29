@@ -1,4 +1,6 @@
 .env
+data/crypto_data.db
 venv
 .idea
 __pycache__
+

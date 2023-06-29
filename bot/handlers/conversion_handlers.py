@@ -2,8 +2,10 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 import pickle
 
-from bot import cripto_conversion, bot, conversion_menu, conversion_menu_last
+from bot import cripto_conversion, bot
+from bot.utils import conversion_menu, main_menu_or_close, history_conversion_menu
 from .cripto_info_handlers import MenuState
+from bot.models import User
 
 
 # Функция для проверки на корректность вводимых данных пользователем
@@ -55,6 +57,10 @@ async def send_conversion_menu_next(message: types.Message, state: FSMContext):
 
 # Получаем название второй валюты и присылаем информацию о конвертации пользователю
 async def send_conversion_info(message: types.Message, state: FSMContext):
+
+    # Экземпляр класса для записи истории конвертации в бд
+    user = User(message.from_user.id)
+
     data = await state.get_data()
     first_cripto, *count = data.get('cripto_info')
     menu_id = data.get('menu_id')
@@ -68,22 +74,46 @@ async def send_conversion_info(message: types.Message, state: FSMContext):
     message_from_user = message.text.split()  # Получаем название второй валюты
 
     if check_cripto_info(message_from_user):
-        first_currency, second_currency, price, time = cripto_conversion(first_cripto, message_from_user[0], count)
+        currency_from, currency_to, price, time = cripto_conversion(first_cripto, message_from_user[0], count)
         await bot.edit_message_text(message_id=menu_id,
                                     chat_id=message.chat.id,
-                                    text=f'Конвертируем {first_currency} в {second_currency}\n\n'
-                                         f'{second_currency} = {price}$\n\n'
+                                    text=f'Конвертируем {count} {currency_from} в {currency_to}\n\n'
+                                         f'{currency_to} = {price}$\n\n'
                                          f'Время {time}',
-                                    reply_markup=conversion_menu_last)
+                                    reply_markup=main_menu_or_close)
 
         await bot.delete_message(chat_id=message.chat.id,
                                  message_id=message.message_id)
+
+        user.write_conversion_to_db(currency_from, currency_to, count, price, time)
 
     else:
         await message.answer('Не корректные данные ')
 
 
+async def send_history_conversion_(callback_query: types.CallbackQuery):
+    # Экземпляр класса для получения истории конвертации из бд
+    user = User(callback_query.from_user.id)
+    text = 'История конвертации:\n\n'
+
+    try:
+        conversion_history = user.get_conversion_from_db()
+
+        for amount, currency_from, currency_to, price, time in conversion_history:
+            text += f'Конвертируем {amount} {currency_from} в {currency_to}\n' \
+                    f'{currency_to} = {price}\n' \
+                    f'Цена актуальная на: {time}\n\n'
+
+    except Exception as ex:
+        text += 'История конвертации пуста'
+        print(ex)
+
+    await bot.send_message(chat_id=callback_query.message.chat.id,
+                           text=text,
+                           reply_markup=history_conversion_menu)
+
 def register_conversion_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(send_conversion_menu, lambda c: c.data == 'button_conversion')
     dp.register_message_handler(send_conversion_menu_next, state=MenuState.conversion_menu)
     dp.register_message_handler(send_conversion_info, state=MenuState.conversion_menu_next)
+    dp.register_callback_query_handler(send_history_conversion_, lambda c: c.data == 'button_history_conversion')

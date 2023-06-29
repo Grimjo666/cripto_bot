@@ -9,13 +9,20 @@ button_main_menu = InlineKeyboardButton('В основное меню', callback
 button_cripto_buttons = InlineKeyboardButton('Список доступных валют', callback_data='button_cripto_buttons')
 
 
+# меню с двумя кнопками в основное меню или закрыть
+main_menu_or_close = InlineKeyboardMarkup()
+
+main_menu_or_close.add(button_main_menu, button_close)
+
+
 # Основное меню бота
 main_menu = InlineKeyboardMarkup(row_width=1)
 
 button_current_rate = InlineKeyboardButton('Текущий курс', callback_data='button_current_rate')
 button_conversion = InlineKeyboardButton('Конвертировать валюту', callback_data='button_conversion')
+button_history_conversion = InlineKeyboardButton('История конвертации', callback_data='button_history_conversion')
 
-main_menu.add(button_current_rate, button_conversion, button_close)
+main_menu.add(button_current_rate, button_conversion, button_history_conversion, button_close)
 
 
 # Меню курс сейчас
@@ -29,10 +36,6 @@ conversion_menu = InlineKeyboardMarkup(row_width=1)
 
 conversion_menu.add(button_cripto_buttons, button_main_menu, button_close)
 
-conversion_menu_last = InlineKeyboardMarkup()
-
-conversion_menu_last.add(button_main_menu, button_close)
-
 
 # Клавиатура с названиями криптовалют
 cripto_buttons = ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=False)
@@ -41,3 +44,9 @@ with open('data/crypto_dict.pkl', 'rb') as file:
     loaded_dict = pickle.load(file)
     for value in loaded_dict.values():
         cripto_buttons.add(KeyboardButton(value.title()))
+
+
+# Меню история конвертации
+history_conversion_menu = InlineKeyboardMarkup()
+
+history_conversion_menu.add(button_close)
