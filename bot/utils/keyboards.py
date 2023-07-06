@@ -21,8 +21,9 @@ main_menu = InlineKeyboardMarkup(row_width=1)
 button_current_rate = InlineKeyboardButton('Текущий курс', callback_data='button_current_rate')
 button_conversion = InlineKeyboardButton('Конвертировать валюту', callback_data='button_conversion')
 button_history_conversion = InlineKeyboardButton('История конвертации', callback_data='button_history_conversion')
+button_graphs_menu = InlineKeyboardButton('Графики', callback_data='button_graphs_menu')
 
-main_menu.add(button_current_rate, button_conversion, button_history_conversion, button_close)
+main_menu.add(button_current_rate, button_conversion, button_history_conversion, button_graphs_menu, button_close)
 
 
 # Меню курс сейчас
@@ -50,3 +51,9 @@ with open('data/crypto_dict.pkl', 'rb') as file:
 history_conversion_menu = InlineKeyboardMarkup()
 
 history_conversion_menu.add(button_close)
+
+
+# Меню графиков
+graph_menu = InlineKeyboardMarkup(row_width=1)
+
+graph_menu.add(cripto_buttons, button_main_menu, button_close)
