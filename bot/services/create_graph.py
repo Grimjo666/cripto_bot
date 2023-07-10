@@ -1,12 +1,16 @@
-import requests
+import json
+import pickle
 from datetime import datetime
-import pickle, json
+
+import requests
 
 end = int(datetime(2023, 7, 6).timestamp()) * 1000
 start = int(datetime(2023, 7, 4).timestamp()) * 1000
 
 
 def get_period_currency_price(currency, start, end):
+
+
 
     with open('../../data/crypto_dict.pkl', 'rb') as file:
         loaded_dict = pickle.load(file)
